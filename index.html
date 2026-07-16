@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>May AI</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#111;
+    color:white;
+}
+
+#home{
+    text-align:center;
+    padding-top:50px;
+}
+
+#home img{
+    width:200px;
+    height:200px;
+    border-radius:50%;
+}
+
+button{
+    padding:10px 20px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+#app{
+    display:none;
+}
+
+.header{
+    height:50px;
+    background:#222;
+    display:flex;
+    align-items:center;
+    padding:0 15px;
+    font-size:20px;
+}
+
+
+#menu{
+    display:none;
+    position:absolute;
+    width:250px;
+    height:100%;
+    background:#222;
+    top:0;
+    left:0;
+    padding:20px;
+    z-index:10;
+}
+
+
+.history{
+    background:#333;
+    padding:15px;
+    margin-top:10px;
+    border-radius:10px;
+}
+
+
+#chat{
+    height:70vh;
+    overflow-y:auto;
+    padding:15px;
+}
+
+
+.user{
+    background:#0066ff;
+    padding:10px;
+    border-radius:10px;
+    margin:10px;
+    text-align:right;
+}
+
+
+.ai{
+    background:#333;
+    padding:10px;
+    border-radius:10px;
+    margin:10px;
+}
+
+
+.bottom{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    display:flex;
+    background:#222;
+    padding:10px;
+}
+
+
+input{
+    flex:1;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+}
+.header{
+    background:linear-gradient(90deg,#2196f3,#9c27b0);
+}
+
+button{
+    background:#2196f3;
+    color:white;
+}
+
+.history{
+    background:#333;
+    color:white;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div id="home">
+
+<h1>May AI 🤖</h1>
+
+<img src="girl.png">
+
+<br><br>
+
+<button onclick="start()">Start Chat</button>
+
+</div>
+
+
+
+<div id="app">
+
+
+<div class="header">
+
+<button onclick="menu()">☰</button>
+
+&nbsp; May AI
+
+</div>
+
+
+
+<div id="menu">
+
+<h2>Menu</h2>
+
+<button onclick="menu()">✖ Close</button>
+
+
+<div class="history" onclick="showHistory()">
+📜 History
+</div>
+
+
+<div id="historyBox" style="display:none;">
+
+<h3>History</h3>
+
+<p>No chats saved yet</p>
+
+</div>
+
+
+<br>
+
+
+<div class="history" onclick="newChat()">
+➕ New Chat
+</div>
+<div class="history" onclick="showThemes()">
+🎨 Themes
+</div>
+
+<div id="themeBox" style="display:none;">
+
+<div class="history" onclick="setTheme('dark')">🌙 Dark</div>
+
+<div class="history" onclick="setTheme('light')">☀️ Light</div>
+
+<div class="history" onclick="setTheme('blue')">🔵 Blue</div>
+
+<div class="history" onclick="setTheme('green')">🟢 Green</div>
+
+<div class="history" onclick="setTheme('purple')">🟣 Purple</div>
+
+<div class="history" onclick="setTheme('red')">🔴 Red</div>
+<div class="history" onclick="setTheme('doraemon')">
+🟦 Doraemon
+</div>
+
+<div class="history" onclick="setTheme('animegirl')">
+👓 Anime Girl
+</div>
+</div>
+
+</div>
+
+
+
+<div id="chat">
+
+<div class="ai">
+Hello 👋 How can I help you?
+</div>
+
+
+</div>
+
+
+
+<div class="bottom">
+
+<input id="msg" placeholder="Type message..." autocomplete="on" spellcheck="true">
+
+<button onclick="send()">Send</button>
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+
+let history = JSON.parse(localStorage.getItem("mayHistory")) || [];
+
+
+
+function start(){
+
+document.getElementById("home").style.display="none";
+
+document.getElementById("app").style.display="block";
+
+}
+
+
+
+
+function menu(){
+
+let m=document.getElementById("menu");
+
+
+if(m.style.display=="block")
+
+m.style.display="none";
+
+else
+
+m.style.display="block";
+
+
+}
+
+let startX = 0;
+
+document.addEventListener("touchstart", function(e){
+    startX = e.touches[0].clientX;
+});
+
+document.addEventListener("touchend", function(e){
+
+    let endX = e.changedTouches[0].clientX;
+
+    // Left → Right swipe
+    if(endX - startX > 100){
+        document.getElementById("menu").style.display="block";
+    }
+
+    // Right → Left swipe
+    if(startX - endX > 100){
+        document.getElementById("menu").style.display="none";
+    }
+
+});
+
+
+function showHistory(){
+
+let h=document.getElementById("historyBox");
+
+if(h.style.display=="block"){
+
+    h.style.display="none";
+
+}
+else{
+
+    h.style.display="block";
+
+    let text="<h3>📜 History</h3>";
+
+    if(history.length==0){
+
+        text += "<p>No chats saved yet</p>";
+
+    }
+    else{
+
+        for(let i=0;i<history.length;i++){
+
+            text += "<p><b>You:</b> "
+            + history[i].user +
+            "<br><b>May AI:</b> "
+            + history[i].ai +
+            "</p><hr>";
+
+        }
+
+    }
+
+    h.innerHTML=text;
+
+}
+
+}
+
+
+
+
+function newChat(){
+
+document.getElementById("chat").innerHTML="";
+
+}
+
+function showThemes(){
+
+let t=document.getElementById("themeBox");
+
+if(t.style.display=="block")
+    t.style.display="none";
+else
+    t.style.display="block";
+
+}
+
+
+function setTheme(color){
+
+if(color=="dark"){
+    document.body.style.background="#111";
+    document.body.style.color="white";
+}
+
+if(color=="light"){
+    document.body.style.background="white";
+    document.body.style.color="black";
+}
+
+if(color=="blue"){
+    document.body.style.background="#0d47a1";
+    document.body.style.color="white";
+}
+
+if(color=="green"){
+    document.body.style.background="#1b5e20";
+    document.body.style.color="white";
+}
+
+if(color=="purple"){
+    document.body.style.background="#4a148c";
+    document.body.style.color="white";
+}
+
+if(color=="red"){
+    document.body.style.background="#b71c1c";
+    document.body.style.color="white";
+}
+if(color=="doraemon"){
+    document.body.style.background="#2196f3";
+    document.body.style.color="white";
+}
+
+if(color=="animegirl"){
+    document.body.style.background="#ffb6c1";
+    document.body.style.color="#222";
+}
+}
+
+
+async function send(){
+
+
+let t=document.getElementById("msg").value;
+t = t.toLowerCase().trim();
+
+let corrections = {
+"helo":"hello",
+"helloo":"hello",
+"indai":"india",
+"prim minister":"prime minister",
+"captil":"capital",
+"wht":"what",
+"whos":"who is"
+};
+
+for(let wrong in corrections){
+    t = t.replace(wrong, corrections[wrong]);
+}
+
+if(t=="") return;
+
+
+
+let reply="";
+if(t.toLowerCase().includes("hindi")){
+
+let word = t.toLowerCase()
+.replace("in hindi","")
+.replace("matlab hindi","")
+.replace("hindi","")
+.trim();
+
+try{
+
+let response = await fetch("https://api.dictionaryapi.dev/api/v2/entries/en/"+word);
+
+let data = await response.json();
+
+let meaning = data[0].meanings[0].definitions[0].definition;
+
+reply = word + " ka matlab Hindi me: " + meaning;
+
+}
+
+catch{
+
+reply="Mujhe iska Hindi meaning nahi mila 🤖";
+
+}
+
+}
+if(t.toLowerCase().includes("translate") || t.toLowerCase().includes("hindi me") || t.toLowerCase().includes("hindi mein")){
+
+let word = t.toLowerCase()
+.replaceAll("translate","")
+.replaceAll("hindi me","")
+.replaceAll("hindi mein","")
+.trim();
+
+
+try{
+
+let response = await fetch("https://api.mymemory.translated.net/get?q="+word+"&langpair=en|hi");
+
+let data = await response.json();
+
+reply = data.responseData.translatedText;
+
+}
+
+catch{
+
+reply="Translation nahi mil paya 🤖";
+
+}
+
+}
+else if(t.toLowerCase().includes("hello meaning")){
+
+reply="Hello ka matlab Namaste ya kisi ko greet karna hota hai.";
+
+}
+
+else if(t.toLowerCase().includes("ai meaning")){
+
+reply="AI ka matlab Artificial Intelligence hota hai.";
+
+}
+
+else if(t.toLowerCase().includes("computer meaning")){
+
+reply="Computer ek electronic device hai jo data ko process karta hai.";
+
+}
+
+else if(t.toLowerCase().includes("water meaning")){
+
+reply="Water ka matlab paani hota hai.";
+
+}
+
+else if(t.toLowerCase().includes("love meaning")){
+
+reply="Love ka matlab pyaar hota hai.";
+
+}
+
+else if(t.toLowerCase().includes("friend meaning")){
+
+reply="Friend ka matlab dost hota hai.";
+
+}
+
+else if(t.toLowerCase().includes("hi") || t.toLowerCase().includes("hello")){
+
+reply="Hello 👋 Main May AI hu. Kaise help kar sakta hu?";
+
+}
+
+
+
+
+else if(t.toLowerCase().includes("who are you")){
+
+reply="Main May AI hu 🤖. Main tumhari help karne ke liye banaya gaya hu.";
+
+}
+else if(t.toLowerCase().includes("how are you")){
+
+reply="Main bilkul ready hu 😊";
+
+}
+else if(t.toLowerCase().includes("prime minister of india") ||
+        t.toLowerCase().includes("who is the prime minister") ||
+        t.toLowerCase().includes("india ka pm") ||
+        t.toLowerCase().includes("bharat ka pradhan mantri")){
+
+reply="India ke Prime Minister Narendra Modi hain 🇮🇳";
+
+}
+
+else if(t.toLowerCase().includes("capital of india") ||
+        t.toLowerCase().includes("india ki rajdhani")){
+
+reply="India ki capital New Delhi hai 🇮🇳";
+
+}
+
+else if(t.toLowerCase().includes("president of india") ||
+        t.toLowerCase().includes("india ke rashtrapati")){
+
+reply="India ke President Droupadi Murmu hain 🇮🇳";
+
+}
+else{
+
+try{
+
+let response = await fetch("https://api.dictionaryapi.dev/api/v2/entries/en/"+t);
+
+let data = await response.json();
+
+reply = data[0].meanings[0].definitions[0].definition;
+
+}
+
+catch{
+
+reply="Mujhe is word ka meaning nahi mila 🤖";
+
+}
+
+}
+let box=document.getElementById("chat");
+box.innerHTML += "<div class='user'>You: "+t+"</div>";
+
+box.innerHTML += "<div class='ai'>May AI: "+reply+"</div>";
+history.push({
+
+user:t,
+
+ai:reply
+
+});
+
+
+localStorage.setItem("mayHistory", JSON.stringify(history));
+
+
+document.getElementById("msg").value="";
+
+
+}
+</script>
