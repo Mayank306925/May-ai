@@ -574,7 +574,15 @@ reply="Mujhe is word ka meaning nahi mila 🤖";
 let box=document.getElementById("chat");
 box.innerHTML += "<div class='user'>You: "+t+"</div>";
 
+box.innerHTML += "<div id='typing' class='ai'>May AI is typing... ⏳</div>";
+
+setTimeout(()=>{
+
+document.getElementById("typing").remove();
+
 box.innerHTML += "<div class='ai'>May AI: "+reply+"</div>";
+
+},2000);
 history.push({
 
 user:t,
