@@ -552,21 +552,30 @@ else if(t.toLowerCase().includes("president of india") ||
 reply="India ke President Droupadi Murmu hain 🇮🇳";
 
 }
+
 else{
 
 try{
 
-let response = await fetch("https://api.dictionaryapi.dev/api/v2/entries/en/"+t);
+let response = await fetch("/api/chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+message:t
+})
+});
 
 let data = await response.json();
 
-reply = data[0].meanings[0].definitions[0].definition;
+reply = data.reply;
 
 }
 
 catch{
 
-reply="Mujhe is word ka meaning nahi mila 🤖";
+reply="May AI se connect nahi ho paya 🤖";
 
 }
 
